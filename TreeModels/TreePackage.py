@@ -1,4 +1,5 @@
 import numpy as np
+from sklearn.metrics import r2_score, accuracy_score
 from LinearPackage import MeanAbsoluteError, Huber, MeanSquaredError
 
 
@@ -149,10 +150,7 @@ class Tree(object):
                  number_of_dimensions: int = None, type: str = "classifier"):
         self.values = values
         self.labels = labels
-        if number_of_dimensions is not None:
-            self.dimensions = np.random.choice(self.values.shape[1], number_of_dimensions, replace=False)
-        else:
-            self.dimensions = [i for i in range(self.values.shape[1])]
+        self.dimensions = np.random.choice(self.values.shape[1], number_of_dimensions, replace=False)
         data = np.column_stack((values, labels))
         self.impurity_function = impurity_function
         self.max_depth = max_depth
@@ -361,7 +359,7 @@ class IdentificationTree(object):
         self.impurity_function = None
         self.max_depth = None
 
-    def compile(self, max_depth: int, impurity_function: str | None, max_features: int = -1):
+    def compile(self, max_depth: int, impurity_function: str | None, max_features: int = None):
         """
         Compile the parameters for the tree.
 
@@ -393,8 +391,7 @@ class IdentificationTree(object):
             else:
                 raise ValueError("Invalid impurity function!")
         self.max_depth = max_depth
-        if max_features != -1:
-            self.max_features = max_features
+        self.max_features = max_features
 
     def train(self, x_train: np.ndarray, y_train: np.ndarray):
         """
@@ -407,6 +404,13 @@ class IdentificationTree(object):
         y_train : np.ndarray
             The input data labels.
         """
+        if self.max_features is None:
+            self.max_features = x_train.shape[1]
+        elif self.max_features == "sqrt":
+            self.max_features = int(np.sqrt(x_train.shape[1])) + 1
+        elif self.max_features == "log":
+            self.max_features = int(np.log(x_train.shape[1])) + 1
+
         self.tree = Tree(
             values=x_train,
             labels=y_train,
