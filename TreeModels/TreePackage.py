@@ -1,6 +1,5 @@
 import numpy as np
-from sklearn.metrics import r2_score, accuracy_score
-from LinearPackage import MeanAbsoluteError, Huber, MeanSquaredError
+from LinearModels.Losses import MeanAbsoluteError, Huber, MeanSquaredError
 
 
 class Gini(object):
