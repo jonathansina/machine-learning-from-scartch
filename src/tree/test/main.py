@@ -19,7 +19,8 @@ def run_classification_example():
     X, y = make_classification(n_samples=100, n_features=5, random_state=42)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
-    tree_classifier = IdentificationTreeFactory.create("classifier", impurity_type="gini", max_depth=4)
+    tree_classifier = IdentificationTreeFactory.create("classifier")
+    tree_classifier.compile(impurity_type="gini", max_depth=4)
     tree_classifier.train(X_train, y_train)
     
     predictions = tree_classifier.predict(X_test)
@@ -74,7 +75,8 @@ def run_regression_example():
     X, y = make_regression(n_samples=100, n_features=5, random_state=42)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
-    tree_regressor = IdentificationTreeFactory.create("regressor", impurity_type="mse")
+    tree_regressor = IdentificationTreeFactory.create("regressor")
+    tree_regressor.compile(impurity_type="mse", max_depth=4)
     tree_regressor.train(X_train, y_train)
     
     predictions = tree_regressor.predict(X_test)

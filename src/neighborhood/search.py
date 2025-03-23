@@ -15,7 +15,7 @@ from src.neighborhood.distances import DistanceMetric
 
 class SearchAlgorithm(ABC):
     @abstractmethod
-    def train(self, x_train: np.ndarray, y_train: np.ndarray) -> None:
+    def train(self, x_train: np.ndarray, y_train: np.ndarray):
         raise NotImplementedError("Subclasses must implement this method")
     
     @abstractmethod
@@ -28,7 +28,7 @@ class BruteForceSearch(SearchAlgorithm):
         self.x_train = None
         self.y_train = None
     
-    def train(self, x_train: np.ndarray, y_train: np.ndarray) -> None:
+    def train(self, x_train: np.ndarray, y_train: np.ndarray):
         self.x_train = x_train
         self.y_train = y_train
     
@@ -43,7 +43,7 @@ class KDTreeSearch(SearchAlgorithm):
         self.tree = None
         self.knn_set = []
     
-    def train(self, x_train: np.ndarray, y_train: np.ndarray) -> None:
+    def train(self, x_train: np.ndarray, y_train: np.ndarray):
         self.tree = KDTree(values=x_train, labels=y_train)
     
     def find_neighbors(self, x: np.ndarray, k: int, metric: DistanceMetric) -> List:
@@ -51,7 +51,7 @@ class KDTreeSearch(SearchAlgorithm):
         self._search_tree(x, self.tree.root, k, metric)
         return [node.label for node, _ in self.knn_set]
     
-    def _search_tree(self, x: np.ndarray, node: KDNode, k: int, metric: DistanceMetric) -> None:
+    def _search_tree(self, x: np.ndarray, node: KDNode, k: int, metric: DistanceMetric):
         if node is None:
             return
             
