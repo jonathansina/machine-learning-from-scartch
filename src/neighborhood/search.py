@@ -1,6 +1,6 @@
 import sys
-from typing import List
 from abc import ABC, abstractmethod
+from typing import List, Optional, Tuple
 
 import numpy as np
 
@@ -25,31 +25,38 @@ class SearchAlgorithm(ABC):
 
 class BruteForceSearch(SearchAlgorithm):
     def __init__(self):
-        self.x_train = None
-        self.y_train = None
+        self.x_train: Optional[np.ndarray] = None
+        self.y_train: Optional[np.ndarray] = None
     
     def train(self, x_train: np.ndarray, y_train: np.ndarray):
         self.x_train = x_train
         self.y_train = y_train
     
     def find_neighbors(self, x: np.ndarray, k: int, metric: DistanceMetric) -> np.ndarray:
-        distances = [metric(self.x_train[i], x) for i in range(self.x_train.shape[0])]
+        distances = [
+            metric(self.x_train[i], x) 
+            for i in range(self.x_train.shape[0])
+        ]
+
         indices = np.argsort(distances)[:k]
         return self.y_train[indices]
 
 
 class KDTreeSearch(SearchAlgorithm):
     def __init__(self):
-        self.tree = None
-        self.knn_set = []
+        self.tree: Optional[KDTree] = None
+        self.knn_set: List[Tuple[KDNode, float]] = []
     
     def train(self, x_train: np.ndarray, y_train: np.ndarray):
         self.tree = KDTree(values=x_train, labels=y_train)
     
     def find_neighbors(self, x: np.ndarray, k: int, metric: DistanceMetric) -> List:
-        self.knn_set = []
+        self.knn_set: List[Tuple[KDNode, float]] = []
         self._search_tree(x, self.tree.root, k, metric)
-        return [node.label for node, _ in self.knn_set]
+        return [
+            node.label 
+            for node, _ in self.knn_set
+        ]
     
     def _search_tree(self, x: np.ndarray, node: KDNode, k: int, metric: DistanceMetric):
         if node is None:
@@ -57,7 +64,10 @@ class KDTreeSearch(SearchAlgorithm):
             
         distance = metric(x, node.value)
         
-        duplicate = [metric(node.value, item[0].value) < 1e-4 for item in self.knn_set]
+        duplicate = [
+            metric(node.value, item[0].value) < 1e-4 
+            for item in self.knn_set
+        ]
         
         if not np.array(duplicate, bool).any():
             if len(self.knn_set) < k:
