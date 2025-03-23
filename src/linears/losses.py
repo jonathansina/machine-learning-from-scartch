@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class MeanSquaredError(object):
     def __init__(self):
         self.name = 'mean_squared_error'
