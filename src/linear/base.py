@@ -1,6 +1,6 @@
 import sys
-from typing import Optional, Union
 from abc import ABC, abstractmethod
+from typing import Optional, Union, Literal
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -31,9 +31,9 @@ class BaseLinearModel(ABC):
         
     def compile(
         self, 
-        optimizer: Union[str, Optimizer], 
-        loss: Union[str, Loss], 
-        regularizer: Optional[Union[str, Regularizer]] = None
+        optimizer: Union[Literal["adam", "adagrad", "rmsprop", "sgd", "newton-method"], Optimizer], 
+        loss: Union[Literal["mse", "mae", "huber", "binary_crossentropy", "log_loss", "hinge"], Loss], 
+        regularizer: Optional[Union[Literal["l1", "l2", "l1l2"], Regularizer]] = None
     ):
         self.optimizer = ComponentFactory.create_optimizer(optimizer)
         self.loss = ComponentFactory.create_loss(loss)

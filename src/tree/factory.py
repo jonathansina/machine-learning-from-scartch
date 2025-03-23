@@ -1,5 +1,5 @@
 import sys
-from typing import Optional, Union, Literal
+from typing import Literal
 
 from path_handler import PathManager
 
@@ -7,9 +7,7 @@ path_manager = PathManager()
 sys.path.append(str(path_manager.get_base_directory()))
 
 from src.tree.base import IdentificationTree
-from src.tree.impurity.classification import Gini, Entropy
 from src.tree.strategy import ClassificationTreeBuilder, RegressionTreeBuilder
-from src.tree.impurity.regression import MeanSquaredError, MeanAbsoluteError, Huber
 
 
 class IdentificationTreeFactory:
