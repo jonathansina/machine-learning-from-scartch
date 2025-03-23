@@ -8,7 +8,7 @@ from path_handler import PathManager
 path_manager = PathManager()
 sys.path.append(str(path_manager.get_base_directory()))
 
-from src.neighborhoods.distances import (
+from src.neighborhood.distances import (
     Cosine, 
     Hamming,
     Jaccard, 
@@ -18,19 +18,16 @@ from src.neighborhoods.distances import (
     Minkowski,
     DistanceMetric
 )
-from src.neighborhoods.search import BruteForceSearch, KDTreeSearch
-from src.neighborhoods.predictor import ClassifierPredictor, RegressorPredictor
+from src.neighborhood.predictor import Predictor
+from src.neighborhood.search import BruteForceSearch, KDTreeSearch
 
 
 class NearestNeighbor:
-    def __init__(self, type: str = "classifier"):
-        if type not in ["classifier", "regressor"]:
-            raise ValueError("type must be either 'classifier' or 'regressor'")
-        
-        self.predictor = ClassifierPredictor() if type == "classifier" else RegressorPredictor()
-        self.search_algorithm = None
-        self.metric = None
+    def __init__(self, predictor: Predictor):
         self.k = None
+        self.metric = None
+        self.predictor = predictor
+        self.search_algorithm = None
 
     def compile(self, k: int, metrics: str = "euclidean", algorithm: str = "brute-force"):
         metric_map = {

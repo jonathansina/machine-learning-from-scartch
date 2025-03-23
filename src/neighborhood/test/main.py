@@ -11,7 +11,7 @@ from path_handler import PathManager
 path_manager = PathManager()
 sys.path.append(str(path_manager.get_base_directory()))
 
-from src.neighborhoods.neighbors import NearestNeighbor
+from src.neighborhood.factory import NearestNeighborFactory
 
 
 def run_classification_example():
@@ -19,7 +19,7 @@ def run_classification_example():
     X, y = make_classification(n_samples=100, n_features=5, random_state=42)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
-    knn_classifier = NearestNeighbor(type="classifier")
+    knn_classifier = NearestNeighborFactory.create("classifier")
     knn_classifier.compile(k=3, metrics="euclidean", algorithm="brute-force")
     knn_classifier.train(X_train, y_train)
     
@@ -75,7 +75,7 @@ def run_regression_example():
     X, y = make_regression(n_samples=100, n_features=5, random_state=42)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
-    knn_regressor = NearestNeighbor(type="regressor")
+    knn_regressor = NearestNeighborFactory.create("regressor")
     knn_regressor.compile(k=5, metrics="manhattan", algorithm="kd-tree")
     knn_regressor.train(X_train, y_train)
     
