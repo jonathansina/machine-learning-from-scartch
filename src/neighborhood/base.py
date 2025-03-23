@@ -1,5 +1,5 @@
 import sys
-from typing import Union
+from typing import Union, Optional
 
 import numpy as np
 
@@ -19,15 +19,15 @@ from src.neighborhood.distances import (
     DistanceMetric
 )
 from src.neighborhood.predictor import Predictor
-from src.neighborhood.search import BruteForceSearch, KDTreeSearch
+from src.neighborhood.search import BruteForceSearch, KDTreeSearch, SearchAlgorithm
 
 
 class NearestNeighbor:
     def __init__(self, predictor: Predictor):
-        self.k = None
-        self.metric = None
         self.predictor = predictor
-        self.search_algorithm = None
+        self.k: Optional[int] = None
+        self.metric: Optional[DistanceMetric] = None
+        self.search_algorithm: Optional[SearchAlgorithm] = None
 
     def compile(self, k: int, metrics: str = "euclidean", algorithm: str = "brute-force"):
         metric_map = {
