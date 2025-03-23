@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class AdaGrad(object):
     def __init__(self, learning_rate: float = 0.001, epsilon: float = 1e-8):
         self.learning_rate = learning_rate

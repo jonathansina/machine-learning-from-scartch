@@ -22,10 +22,11 @@ class IdentificationTree:
         max_depth: int = 10,
         max_features: Optional[Union[int, str]] = None
     ):
-        self.impurity_measure = impurity_measure
-        self.builder_strategy = builder_strategy
         self.max_depth = max_depth
         self.max_features = max_features
+        self.builder_strategy = builder_strategy
+        self.impurity_measure = impurity_measure
+        
         self.root = None
         self.depth = 0
         self.features_count = None
