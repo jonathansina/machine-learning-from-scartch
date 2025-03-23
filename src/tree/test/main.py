@@ -21,7 +21,7 @@ def run_classification_example():
     
     tree_classifier = IdentificationTreeFactory.create("classifier")
     tree_classifier.compile(impurity_type="gini", max_depth=4)
-    tree_classifier.train(X_train, y_train)
+    tree_classifier.fit(X_train, y_train)
     
     predictions = tree_classifier.predict(X_test)
     accuracy = (predictions == y_test).mean()
@@ -77,7 +77,7 @@ def run_regression_example():
     
     tree_regressor = IdentificationTreeFactory.create("regressor")
     tree_regressor.compile(impurity_type="mse", max_depth=4)
-    tree_regressor.train(X_train, y_train)
+    tree_regressor.fit(X_train, y_train)
     
     predictions = tree_regressor.predict(X_test)
     mse = ((predictions - y_test) ** 2).mean()

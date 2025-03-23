@@ -15,7 +15,7 @@ from src.neighborhood.distances import DistanceMetric
 
 class SearchAlgorithm(ABC):
     @abstractmethod
-    def train(self, x_train: np.ndarray, y_train: np.ndarray):
+    def fit(self, x_train: np.ndarray, y_train: np.ndarray):
         raise NotImplementedError("Subclasses must implement this method")
     
     @abstractmethod
@@ -28,7 +28,7 @@ class BruteForceSearch(SearchAlgorithm):
         self.x_train: Optional[np.ndarray] = None
         self.y_train: Optional[np.ndarray] = None
     
-    def train(self, x_train: np.ndarray, y_train: np.ndarray):
+    def fit(self, x_train: np.ndarray, y_train: np.ndarray):
         self.x_train = x_train
         self.y_train = y_train
     
@@ -47,7 +47,7 @@ class KDTreeSearch(SearchAlgorithm):
         self.tree: Optional[KDTree] = None
         self.knn_set: List[Tuple[KDNode, float]] = []
     
-    def train(self, x_train: np.ndarray, y_train: np.ndarray):
+    def fit(self, x_train: np.ndarray, y_train: np.ndarray):
         self.tree = KDTree(values=x_train, labels=y_train)
     
     def find_neighbors(self, x: np.ndarray, k: int, metric: DistanceMetric) -> List:

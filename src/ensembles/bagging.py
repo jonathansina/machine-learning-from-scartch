@@ -30,7 +30,7 @@ class Bagging(object):
         self.max_samples = max_samples
         self.estimator_stack = []
 
-    def train(self, x_train: np.ndarray, y_train: np.ndarray, verbose: int = 2):
+    def fit(self, x_train: np.ndarray, y_train: np.ndarray, verbose: int = 2):
         if self.max_features is None:
             self.max_features = x_train.shape[1]
         elif self.max_features == "sqrt":
@@ -41,7 +41,7 @@ class Bagging(object):
         x_samples, y_samples = self.bootstrap_aggregating(x_train, y_train)
         for i in range(self.number_of_estimators):
             tree = copy.deepcopy(self.estimator)
-            tree.train(x_samples[i], y_samples[i])
+            tree.fit(x_samples[i], y_samples[i])
             self.estimator_stack.append(tree)
             if verbose <= 2:
                 print(f"---------------------- Learner {i + 1}/{self.number_of_estimators} Learned ----------------------")
@@ -111,7 +111,7 @@ class GradientBoostedRegressionTree(object):
         else:
             raise ValueError("Invalid loss!")
 
-    def train(self, x_train: np.ndarray, y_train: np.ndarray, verbose: int = 2) -> np.ndarray:
+    def fit(self, x_train: np.ndarray, y_train: np.ndarray, verbose: int = 2) -> np.ndarray:
         self.y_mean = np.mean(y_train)
         prediction = (np.ones(y_train.shape[0]) * self.y_mean).reshape(-1, 1)
         errors = []
@@ -124,7 +124,7 @@ class GradientBoostedRegressionTree(object):
                 max_features=self.max_features,
                 impurity_function="mse"
             )
-            tree.train(x_train, residual)
+            tree.fit(x_train, residual)
 
             predict = tree.predict(x_train).reshape(-1, 1)
             prediction += predict * self.learning_rate

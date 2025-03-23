@@ -63,8 +63,8 @@ class NearestNeighbor:
         
         self.k = k
 
-    def train(self, x_train: np.ndarray, y_train: np.ndarray):
-        self.search_algorithm.train(x_train, y_train)
+    def fit(self, x_train: np.ndarray, y_train: np.ndarray):
+        self.search_algorithm.fit(x_train, y_train)
 
     def predict(self, x: np.ndarray) -> Union[int, float, np.ndarray]:
         if x.ndim > 1 and x.shape[0] > 1:

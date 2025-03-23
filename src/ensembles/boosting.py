@@ -3,6 +3,7 @@ from TreeModels.TreePackage import IdentificationTree
 from LinearModels.Losses import *
 from matplotlib import pyplot as plt
 
+
 class GradientBoostedRegressionTree(object):
     def __init__(self):
         self.y_mean = 0
@@ -29,7 +30,7 @@ class GradientBoostedRegressionTree(object):
         else:
             raise ValueError("Invalid loss!")
 
-    def train(self, x_train: np.ndarray, y_train: np.ndarray, verbose: int = 2) -> np.ndarray:
+    def fit(self, x_train: np.ndarray, y_train: np.ndarray, verbose: int = 2) -> np.ndarray:
         self.y_mean = np.mean(y_train)
         prediction = (np.ones(y_train.shape[0]) * self.y_mean).reshape(-1, 1)
         errors = []
@@ -42,7 +43,7 @@ class GradientBoostedRegressionTree(object):
                 max_features=self.max_features,
                 impurity_function="mse"
             )
-            tree.train(x_train, residual)
+            tree.fit(x_train, residual)
 
             predict = tree.predict(x_train).reshape(-1, 1)
             prediction += predict * self.learning_rate

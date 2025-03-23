@@ -41,7 +41,7 @@ class BaseLinearModel(ABC):
         
         self._validate_loss_function(self.loss)
 
-    def train(self, x: np.ndarray, y: np.ndarray, epochs: int, batch_size: int = 1, verbose: int = 2):
+    def fit(self, x: np.ndarray, y: np.ndarray, epochs: int, batch_size: int = 1, verbose: int = 2):
         self.epochs += epochs
 
         if y.ndim == 1:

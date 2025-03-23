@@ -21,7 +21,7 @@ def run_classification_example():
     
     knn_classifier = NearestNeighborFactory.create("classifier")
     knn_classifier.compile(k=3, metrics="euclidean", algorithm="brute-force")
-    knn_classifier.train(X_train, y_train)
+    knn_classifier.fit(X_train, y_train)
     
     predictions = knn_classifier.predict(X_test)
     accuracy = (predictions == y_test).mean()
@@ -77,7 +77,7 @@ def run_regression_example():
     
     knn_regressor = NearestNeighborFactory.create("regressor")
     knn_regressor.compile(k=5, metrics="manhattan", algorithm="kd-tree")
-    knn_regressor.train(X_train, y_train)
+    knn_regressor.fit(X_train, y_train)
     
     predictions = knn_regressor.predict(X_test)
     mse = ((predictions - y_test) ** 2).mean()
