@@ -1,6 +1,6 @@
 import sys
 from abc import ABC, abstractmethod
-from typing import Optional, Union, Literal
+from typing import Optional, Union, Literal, List
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,22 +12,22 @@ sys.path.append(str(path_manager.get_base_directory()))
 
 from src.linear.components.loss import Loss
 from src.linear.components.optimizer import Optimizer
-from src.linear.components.batch import MiniBatchGenerator
 from src.linear.components.regularizer import Regularizer
+from src.linear.components.batch import MiniBatchGenerator
 from src.linear.components.factory import ComponentFactory
 from src.linear.trainer import MiniBatchTrainingStrategy, SGDTrainingStrategy
 
 
 class BaseLinearModel(ABC):
     def __init__(self):
-        self.cost = []
         self.epochs = 0
-        self.loss = None
-        self.optimizer = None
-        self.regularizer = None
-        self.batch_generator = MiniBatchGenerator()
+        self.cost: List[float] = []
         self.bias = np.array([])
+        self.loss: Optional[Loss] = None
         self.weight_matrix = np.array([])
+        self.optimizer: Optional[Optimizer] = None
+        self.batch_generator = MiniBatchGenerator()
+        self.regularizer: Optional[Regularizer] = None
         
     def compile(
         self, 

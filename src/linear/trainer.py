@@ -1,17 +1,37 @@
+import sys
 from abc import ABC, abstractmethod
+from typing import List, Tuple, Union, Type, Any
+
+import numpy as np
+
+from path_handler import PathManager
+
+path_manager = PathManager()
+sys.path.append(str(path_manager.get_base_directory()))
+
+from src.linear.components.loss import Loss
+from src.linear.components.optimizer import Optimizer
+from src.linear.components.regularizer import Regularizer
 
 
 class TrainingStrategy(ABC):
-    def __init__(self, optimizer, loss, regularizer):
-        self.optimizer = optimizer
+    def __init__(self, optimizer: Optimizer, loss: Loss, regularizer: Regularizer):
         self.loss = loss
+        self.optimizer = optimizer
         self.regularizer = regularizer
     
     @abstractmethod
-    def train_epoch(self, mini_batches, model):
+    def train_epoch(self, mini_batches: List[Tuple[np.ndarray, np.ndarray]], model: Type[Any]) -> float:
         raise NotImplementedError("Subclasses must implement this method")
     
-    def compute_gradients(self, y_pred, y_true, x, model):
+    def compute_gradients(
+        self, 
+        y_pred: np.ndarray,
+        y_true: np.ndarray, 
+        x: np.ndarray, 
+        model: Type[Any]
+    ) -> Tuple[np.ndarray, np.ndarray]:
+
         penalty_term = 0
         if self.regularizer is not None:
             penalty_term = self.regularizer.derivative(model.weight_matrix)
@@ -21,9 +41,34 @@ class TrainingStrategy(ABC):
         
         return delta_gradient, gradient
 
+    
+    def update_parameters(
+        self, 
+        model: Type[Any], 
+        delta_gradient: Union[float, np.ndarray], 
+        gradient: Union[float, np.ndarray], 
+        batch_idx: int
+    ):
+        if self.optimizer.name in ["adam", "sgd"]:
+            model.weight_matrix, model.bias = self.optimizer(
+                model.weight_matrix, 
+                model.bias, 
+                gradient, 
+                delta_gradient, 
+                batch_idx
+            )
+
+        else:
+            model.weight_matrix, model.bias = self.optimizer(
+                model.weight_matrix, 
+                model.bias, 
+                gradient, 
+                delta_gradient
+            )
+
 
 class SGDTrainingStrategy(TrainingStrategy):
-    def train_epoch(self, mini_batches, model):
+    def train_epoch(self, mini_batches: List[Tuple[np.ndarray, np.ndarray]], model: Type[Any]) -> float:
         errors = []
         
         for i, (batch_x, batch_y) in enumerate(mini_batches):
@@ -35,21 +80,10 @@ class SGDTrainingStrategy(TrainingStrategy):
                 self.update_parameters(model, delta_gradient, gradient, i)
                 
         return sum(errors) / len(errors) if errors else 0
-    
-    def update_parameters(self, model, delta_gradient, gradient, batch_idx):
-        if self.optimizer.name in ["adam", "sgd"]:
-            model.weight_matrix, model.bias = self.optimizer(
-                model.weight_matrix, model.bias, gradient, delta_gradient, batch_idx
-            )
-
-        else:
-            model.weight_matrix, model.bias = self.optimizer(
-                model.weight_matrix, model.bias, gradient, delta_gradient
-            )
 
 
 class MiniBatchTrainingStrategy(TrainingStrategy):
-    def train_epoch(self, mini_batches, model):
+    def train_epoch(self, mini_batches: List[Tuple[np.ndarray, np.ndarray]], model: Type[Any]) -> float:
         errors = []
         
         for i, (batch_x, batch_y) in enumerate(mini_batches):
@@ -70,12 +104,3 @@ class MiniBatchTrainingStrategy(TrainingStrategy):
             self.update_parameters(model, avg_delta, avg_gradient, i)
                 
         return sum(errors) / len(errors) if errors else 0
-    
-    def update_parameters(self, model, delta_gradient, gradient, batch_idx):
-        if self.optimizer.name in ["adam", "sgd"]:
-            model.weight_matrix, model.bias = self.optimizer(
-                model.weight_matrix, model.bias, gradient, delta_gradient, batch_idx)
-
-        else:
-            model.weight_matrix, model.bias = self.optimizer(
-                model.weight_matrix, model.bias, gradient, delta_gradient)
