@@ -6,19 +6,7 @@ import copy
 
 
 class Bagging(object):
-    """
-    The Bagging class is used for ensemble learning by combining the predictions of multiple base learners.
-    The base learners are trained using a bootstrap sample of the training data, and the predictions are aggregated to form the final prediction.
-    The base learners can be of any type, such as decision trees, neural networks, or regression models.
-    The Bagging class provides an easy way to improve the performance of any machine learning model without requiring any additional tuning.
-    """
-
     def __init__(self, type: str = "classifier"):
-        """
-        The __init__ method initializes the Bagging class.
-        Args:
-            type (str, optional): The type of model to be used. Can be "classifier" or "regressor". Defaults to "classifier".
-        """
         if type == "classifier":
             self.type = "classifier"
             self.name = "BaggingClassifier"
@@ -36,14 +24,6 @@ class Bagging(object):
 
     def compile(self, estimator: classmethod, number_of_estimators: int = 10, max_features: int | str = None,
                 max_samples: int = None):
-        """
-        The compile method sets the parameters for the Bagging class.
-        Args:
-            estimator (classmethod): The classmethod of the base learner to be used.
-            number_of_estimators (int, optional): The number of base learners to be used. Defaults to 10.
-            max_features (int or str, optional): The maximum number of features to consider when looking for the best split in each base learner. If "sqrt", then max_features=sqrt(n_features). If "log2", then max_features=log2(n_features). If None, then max_features=n_features. Defaults to None.
-            max_samples (int, optional): The maximum number of samples to draw from the training set to train each base learner. If None, then max_samples=n_samples. Defaults to None.
-        """
         self.estimator = estimator
         self.number_of_estimators = number_of_estimators
         self.max_features = max_features
@@ -51,13 +31,6 @@ class Bagging(object):
         self.estimator_stack = []
 
     def train(self, x_train: np.ndarray, y_train: np.ndarray, verbose: int = 2):
-        """
-        The train method trains the Bagging class using the specified training data.
-        Args:
-            x_train (np.ndarray): The training data.
-            y_train (np.ndarray): The corresponding training labels.
-            verbose (int, optional): The level of verbosity. 0 for no output, 1 for progress bar, 2 for one line per iteration. Defaults to 2.
-        """
         if self.max_features is None:
             self.max_features = x_train.shape[1]
         elif self.max_features == "sqrt":
@@ -81,13 +54,6 @@ class Bagging(object):
                     print(f"Training Error: {training_error}")
 
     def predict(self, x: np.ndarray) -> np.ndarray | tuple[np.ndarray, np.ndarray]:
-        """
-        The predict method makes predictions using the trained Bagging class.
-        Args:
-            x (np.ndarray): The data to be predicted.
-        Returns:
-            np.ndarray or tuple[np.ndarray, np.ndarray]: The predicted values or a tuple of the predicted values and their standard deviation.
-        """
         def base_estimator_predict(x):
             predicted_list = []
             for base_model in self.estimator_stack:
@@ -108,14 +74,6 @@ class Bagging(object):
         return result, accuracy
 
     def bootstrap_aggregating(self, x: np.ndarray, y:np.ndarray) -> tuple[list[np.ndarray], list[np.ndarray]]:
-        """
-        The bootstrap_aggregating method generates bootstrap samples for each base learner.
-        Args:
-            x (np.ndarray): The training data.
-            y (np.ndarray): The corresponding training labels.
-        Returns:
-            tuple[list[np.ndarray], list[np.ndarray]]: A tuple of lists, where each list contains the bootstrap samples for a specific base learner.
-        """
         bootstrap_samples_x = []
         bootstrap_samples_y = []
         if self.max_samples is None:
@@ -129,71 +87,6 @@ class Bagging(object):
     
     
 class GradientBoostedRegressionTree(object):
-    """
-    A class for Gradient Boosted Regression Trees.
-
-    Parameters
-    ----------
-    number_of_estimators : int, optional (default=10)
-        The number of estimators in the ensemble.
-
-    max_depth : int, optional (default=3)
-        The maximum tree depth.
-
-    max_features : int or str, optional (default="sqrt")
-        The number of features to consider when looking for the best split.
-        If "sqrt", then sqrt(number_of_features) are considered.
-
-    loss : str, optional (default="squared-loss")
-        The loss function to be used for optimization.
-        Can be "squared-loss", "absolute-loss", or "huber".
-
-    learning_rate : float, optional (default=0.1)
-        The learning rate for each iteration.
-
-    Attributes
-    ----------
-    y_mean : float
-        The mean of the target variable.
-
-    learning_rate : float
-        The learning rate used in training.
-
-    loss : LossFunction
-        The loss function used in training.
-
-    max_features : int or str
-        The maximum number of features used in tree pruning.
-
-    max_depth : int
-        The maximum tree depth used in training.
-
-    number_of_estimators : int
-        The number of estimators in the ensemble.
-
-    forest : list of IdentificationTree
-        The list of trees in the ensemble.
-
-    Methods
-    -------
-    compile(self, number_of_estimators=10, max_depth=3, max_features="sqrt",
-            loss="squared-loss", learning_rate=0.1)
-        Compiles the model by setting the hyperparameters.
-
-    train(self, x_train, y_train, verbose=2)
-        Trains the model on the given training data.
-
-    predict(self, x)
-        Predicts the target values for the given data.
-
-    residual_error(self, pred, y)
-        Calculates the residual error for a given prediction and target values.
-
-    plot_loss(self, errors)
-        Plots the loss function over the number of iterations.
-
-    """
-
     def __init__(self):
         self.y_mean = 0
         self.learning_rate = None
@@ -205,29 +98,6 @@ class GradientBoostedRegressionTree(object):
 
     def compile(self, number_of_estimators: int = 10, max_depth: int = 3, max_features: int | str = "sqrt",
                 loss: str = "squared-loss", learning_rate: int = 0.1):
-        """
-        Compiles the model by setting the hyperparameters.
-
-        Parameters
-        ----------
-        number_of_estimators : int, optional (default=10)
-            The number of estimators in the ensemble.
-
-        max_depth : int, optional (default=3)
-            The maximum tree depth.
-
-        max_features : int or str, optional (default="sqrt")
-            The number of features to consider when looking for the best split.
-            If "sqrt", then sqrt(number_of_features) are considered.
-
-        loss : str, optional (default="squared-loss")
-            The loss function to be used for optimization.
-            Can be "squared-loss", "absolute-loss", or "huber".
-
-        learning_rate : float, optional (default=0.1)
-            The learning rate for each iteration.
-
-        """
         self.learning_rate = learning_rate
         self.number_of_estimators = number_of_estimators
         self.max_depth = max_depth
@@ -242,26 +112,6 @@ class GradientBoostedRegressionTree(object):
             raise ValueError("Invalid loss!")
 
     def train(self, x_train: np.ndarray, y_train: np.ndarray, verbose: int = 2) -> np.ndarray:
-        """
-        Trains the model on the given training data.
-
-        Parameters
-        ----------
-        x_train : np.ndarray
-            The training data features.
-
-        y_train : np.ndarray
-            The training data target values.
-
-        verbose : int, optional (default=2)
-            The verbosity level.
-
-        Returns
-        -------
-        np.ndarray
-            The list of errors for each iteration.
-
-        """
         self.y_mean = np.mean(y_train)
         prediction = (np.ones(y_train.shape[0]) * self.y_mean).reshape(-1, 1)
         errors = []
@@ -290,55 +140,15 @@ class GradientBoostedRegressionTree(object):
         return np.array(errors)
 
     def predict(self, x: np.ndarray) -> np.ndarray:
-        """
-        Predicts the target values for the given data.
-
-        Parameters
-        ----------
-        x : np.ndarray
-            The data features.
-
-        Returns
-        -------
-        np.ndarray
-            The predicted target values.
-
-        """
         prediction = np.array([self.y_mean] * len(x))
         for tree in self.forest:
             prediction += np.array(tree.predict(x)) * self.learning_rate
         return prediction
 
     def residual_error(self, pred, y: np.ndarray) -> np.ndarray:
-        """
-        Calculates the residual error for a given prediction and target values.
-
-        Parameters
-        ----------
-        pred : np.ndarray
-            The predicted target values.
-
-        y : np.ndarray
-            The target values.
-
-        Returns
-        -------
-        np.ndarray
-            The residual error.
-
-        """
         return self.loss.derivative(pred, y)
 
     def plot_loss(self, errors: np.ndarray):
-        """
-        Plots the loss function over the number of iterations.
-
-        Parameters
-        ----------
-        errors : np.ndarray
-            The list of errors for each iteration.
-
-        """
         plt.plot(range(self.number_of_estimators), errors)
         plt.xlabel('Number of Epochs')
         plt.ylabel('Cost')

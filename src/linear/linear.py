@@ -70,12 +70,12 @@ class LinearModel:
         elif isinstance(regularizer, Regularizer):
             self.regularizer = regularizer
         elif regularizer is None:
-            pass
+            raise NotImplementedError("Subclasses must implement this method")
         else:
             raise ValueError('Invalid regularizer!')
 
     def init_loss_functions(self, loss):
-        pass
+        raise NotImplementedError("Subclasses must implement this method")
 
     def train(self, x: np.ndarray, y: np.ndarray, epochs: int, batch_size: int = 1, verbose: int = 2):
         self.init_parameters(x, y)
@@ -130,7 +130,7 @@ class LinearModel:
         self.bias = np.random.uniform(-1, 1, size=(y.shape[1]))
 
     def predict(self, x: np.ndarray):
-        pass
+        raise NotImplementedError("Subclasses must implement this method")
 
     def plot_loss(self, counter):
         plt.plot(range(counter), self.cost)
