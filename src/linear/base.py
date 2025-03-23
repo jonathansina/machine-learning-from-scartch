@@ -57,13 +57,13 @@ class BaseLinearModel(ABC):
             cost = training_strategy.train_epoch(mini_batches, self)
             self.cost.append(cost)
             
-            if verbose <= 2:
+            if verbose >= 2:
                 self._print_epoch_info(epoch, epochs, cost)
                 
-        if verbose <= 1:
+        if verbose >= 1:
             self._plot_loss(epochs)
             
-        if verbose <= 0:
+        if verbose >= 0:
             print('Optimization Finished')
     
     def _initialize_parameters(self, x: np.ndarray, y: np.ndarray):

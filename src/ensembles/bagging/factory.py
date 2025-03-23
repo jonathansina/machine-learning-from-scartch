@@ -11,11 +11,11 @@ from src.ensembles.bagging.base import BaggingClassifier, BaggingRegressor
 
 class BaggingFactory:
     @staticmethod
-    def Bagging(strategy_type: Literal["classifier", "regressor"]) -> Union[BaggingClassifier, BaggingRegressor]:
-        if type == "classifier":
+    def create(strategy_type: Literal["classifier", "regressor"]) -> Union[BaggingClassifier, BaggingRegressor]:
+        if strategy_type == "classifier":
             return BaggingClassifier()
         
-        elif type == "regressor":
+        elif strategy_type == "regressor":
             return BaggingRegressor()
         
         else:

@@ -7,7 +7,7 @@ class Bootstrap:
     def create_samples(
         x: np.ndarray, 
         y: np.ndarray, 
-        num_estimators: int, 
+        n_estimators: int, 
         max_samples: Optional[int] = None
     ) -> Tuple[List[np.ndarray], List[np.ndarray]]:
 
@@ -15,7 +15,7 @@ class Bootstrap:
         bootstrap_samples_x = []
         bootstrap_samples_y = []
         
-        for _ in range(num_estimators):
+        for _ in range(n_estimators):
             samples_indexes = np.random.choice(x.shape[0], size=max_samples, replace=True)
             bootstrap_samples_x.append(x[samples_indexes])
             bootstrap_samples_y.append(y[samples_indexes])
