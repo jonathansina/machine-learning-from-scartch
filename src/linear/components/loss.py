@@ -24,7 +24,7 @@ class MeanSquaredError(Loss):
         return np.mean(np.power(y - h, 2))
 
     def derivative(self, h: np.ndarray, y: np.ndarray) -> np.ndarray:
-        return 2 * (h - y)
+        return 2 * (y - h)
 
     def second_derivative(self, h: np.ndarray, y: np.ndarray) -> np.ndarray:
         return np.full_like(h, 2)
@@ -113,7 +113,7 @@ class Hinge(Loss):
         else:
             result[mask] = -self.p * np.power(margin[mask], self.p - 1) * y[mask]
             
-        return result
+        return -result
 
     def second_derivative(self, h: np.ndarray, y: np.ndarray) -> np.ndarray:
         if self.p == 2:

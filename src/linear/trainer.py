@@ -9,7 +9,7 @@ class TrainingStrategy(ABC):
     
     @abstractmethod
     def train_epoch(self, mini_batches, model):
-        pass
+        raise NotImplementedError("Subclasses must implement this method")
     
     def compute_gradients(self, y_pred, y_true, x, model):
         penalty_term = 0
@@ -39,11 +39,13 @@ class SGDTrainingStrategy(TrainingStrategy):
     def update_parameters(self, model, delta_gradient, gradient, batch_idx):
         if self.optimizer.name in ["adam", "sgd"]:
             model.weight_matrix, model.bias = self.optimizer(
-                model.weight_matrix, model.bias, gradient, delta_gradient, batch_idx)
+                model.weight_matrix, model.bias, gradient, delta_gradient, batch_idx
+            )
 
         else:
             model.weight_matrix, model.bias = self.optimizer(
-                model.weight_matrix, model.bias, gradient, delta_gradient)
+                model.weight_matrix, model.bias, gradient, delta_gradient
+            )
 
 
 class MiniBatchTrainingStrategy(TrainingStrategy):

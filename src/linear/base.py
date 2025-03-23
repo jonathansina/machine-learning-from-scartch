@@ -13,14 +13,15 @@ sys.path.append(str(path_manager.get_base_directory()))
 from src.linear.components.loss import Loss
 from src.linear.components.optimizer import Optimizer
 from src.linear.components.batch import MiniBatchGenerator
+from src.linear.components.regularizer import Regularizer
 from src.linear.components.factory import ComponentFactory
-from src.linear.components.regularizer import RegularizerBase
 from src.linear.trainer import MiniBatchTrainingStrategy, SGDTrainingStrategy
 
 
 class BaseLinearModel(ABC):
     def __init__(self):
         self.cost = []
+        self.epochs = 0
         self.loss = None
         self.optimizer = None
         self.regularizer = None
@@ -32,7 +33,7 @@ class BaseLinearModel(ABC):
         self, 
         optimizer: Union[str, Optimizer], 
         loss: Union[str, Loss], 
-        regularizer: Optional[Union[str, RegularizerBase]] = None
+        regularizer: Optional[Union[str, Regularizer]] = None
     ):
         self.optimizer = ComponentFactory.create_optimizer(optimizer)
         self.loss = ComponentFactory.create_loss(loss)
@@ -41,6 +42,11 @@ class BaseLinearModel(ABC):
         self._validate_loss_function(self.loss)
 
     def train(self, x: np.ndarray, y: np.ndarray, epochs: int, batch_size: int = 1, verbose: int = 2):
+        self.epochs += epochs
+
+        if y.ndim == 1:
+            y = y.reshape(y.shape[0], 1)
+
         self._initialize_parameters(x, y)
         batch_size = self._determine_batch_size(x, batch_size)
         
@@ -78,9 +84,9 @@ class BaseLinearModel(ABC):
             return SGDTrainingStrategy(self.optimizer, self.loss, self.regularizer)
 
         return MiniBatchTrainingStrategy(self.optimizer, self.loss, self.regularizer)
-    
-    def _plot_loss(self, epochs: int):
-        plt.plot(range(epochs), self.cost)
+
+    def plot_loss_trend(self):
+        plt.plot(range(self.epochs), self.cost)
         plt.xlabel('Number of Epochs')
         plt.ylabel('Cost')
         plt.title('Cost Function')
@@ -90,9 +96,10 @@ class BaseLinearModel(ABC):
         print(f"-------------------[EPOCH {current_epoch}/{total_epochs}]---------------------")
         print(f'Error: {cost}')
     
+    @abstractmethod
     def predict(self, x: np.ndarray) -> np.ndarray:
-        pass
+        raise NotImplementedError("Subclasses must implement this method")
 
     @abstractmethod
     def _validate_loss_function(self, loss):
-        pass
+        raise NotImplementedError("Subclasses must implement this method")

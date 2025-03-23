@@ -8,7 +8,7 @@ sys.path.append(str(path_manager.get_base_directory()))
 
 from src.linear.components.optimizer import Optimizer, AdaGrad, RMSProp, ADAM, SGD, NewtonMethod
 from src.linear.components.regularizer import Regularizer, L1Regularizer, L2Regularizer, ElasticNetRegularizer
-from src.linear.components.loss import Loss, MeanSquaredError, MeanAbsoluteError, BinaryCrossEntropy, Hinge, LogLoss
+from src.linear.components.loss import Loss, MeanSquaredError, MeanAbsoluteError, BinaryCrossEntropy, Hinge, LogLoss, Huber
 
 
 class ComponentFactory:
@@ -26,6 +26,7 @@ class ComponentFactory:
         'newton-method': NewtonMethod()
     }
     LOSS_MAP = {
+        'huber': Huber(),
         'hinge': Hinge(),
         'log_loss': LogLoss(),
         'mse': MeanSquaredError(),

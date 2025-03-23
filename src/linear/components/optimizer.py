@@ -1,7 +1,15 @@
+from abc import ABC, abstractmethod
+
 import numpy as np
 
 
-class AdaGrad(object):
+class Optimizer(ABC):
+    @abstractmethod
+    def __call__(self, weights: np.ndarray, bias: np.ndarray, gradient: np.ndarray, delta_gradient: np.ndarray):
+        raise NotImplementedError("Subclasses must implement this method")
+
+
+class AdaGrad(Optimizer):
     def __init__(self, learning_rate: float = 0.001, epsilon: float = 1e-8):
         self.learning_rate = learning_rate
         self.name = 'adagrad'
@@ -18,7 +26,7 @@ class AdaGrad(object):
         return weights, bias
 
 
-class RMSProp(object):
+class RMSProp(Optimizer):
     def __init__(self, learning_rate: float = 0.001, beta: float = 0.9, epsilon: float = 1e-8):
         self.learning_rate = learning_rate
         self.name = 'rmsprop'
@@ -36,7 +44,7 @@ class RMSProp(object):
         return weights, bias
 
 
-class ADAM(object):
+class ADAM(Optimizer):
     def __init__(self, learning_rate: float = 0.001, beta1: float = 0.9, beta2: float = 0.999, epsilon: float = 1e-8):
         self.learning_rate = learning_rate
         self.name = 'adam'
@@ -64,7 +72,7 @@ class ADAM(object):
         return weights, bias
 
 
-class SGD(object):
+class SGD(Optimizer):
     def __init__(self, learning_rate: float = 0.001, momentum: float = 0.0, nesterov: bool = False, tau: int = 200):
         self.learning_rate = learning_rate
         self.momentum = momentum
@@ -94,7 +102,7 @@ class SGD(object):
         return weights, bias
 
 
-class NewtonMethod(object):
+class NewtonMethod(Optimizer):
     def __init__(self):
         self.name = 'newton-method'
 
