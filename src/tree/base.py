@@ -9,7 +9,7 @@ path_manager = PathManager()
 sys.path.append(str(path_manager.get_base_directory()))
 
 from src.tree.node import Node
-from src.tree.utils import TreeUtils
+from src.tree.utils import TreeUtils, FeatureUtils
 from src.tree.impurity.base import ImpurityMeasure
 from src.tree.impurity.classification import Gini, Entropy
 from src.tree.impurity.regression import MeanSquaredError, MeanAbsoluteError, Huber
@@ -27,19 +27,6 @@ class IdentificationTree:
         self.root: Optional[Node] = None
         self.features_count: Optional[int] = None
         self.selected_features: Optional[int] = None
-
-    def _determine_max_features(self, n_features: int) -> int:
-        if self.max_features is None:
-            return n_features
-
-        elif self.max_features == "sqrt":
-            return int(np.sqrt(n_features)) + 1
-
-        elif self.max_features == "log":
-            return int(np.log(n_features)) + 1
-
-        else:
-            return self.max_features
 
     def _build_tree(self, data: np.ndarray, depth: int) -> Node:
         is_single_class = len(np.unique(data[:, -1])) == 1
@@ -132,7 +119,7 @@ class IdentificationTree:
             raise ValueError("You must call compile() before training the model")
 
         self.features_count = x_train.shape[1]
-        n_features_to_use = self._determine_max_features(self.features_count)
+        n_features_to_use = FeatureUtils.get_feature_count(self.max_features, self.features_count)
         self.selected_features = np.random.choice(self.features_count, n_features_to_use, replace=False)
         
         data = np.column_stack((x_train, y_train))
