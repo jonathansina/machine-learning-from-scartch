@@ -1,7 +1,7 @@
 import sys
 import copy
 from abc import ABC, abstractmethod
-from typing import Optional, Literal, List
+from typing import Optional, Literal, List, Union
 
 import numpy as np
 from sklearn.metrics import r2_score, accuracy_score
@@ -24,14 +24,14 @@ class BaseBagging(ABC):
         self.estimator: Optional[Estimator] = None
         self.estimator_stack: List[Estimator] = []
         self.aggregator: Optional[PredictionAggregator]  = None
-        self.max_features: Optional[Literal["sqrt", "log"]] = None
+        self.max_features: Optional[Union[int, Literal["sqrt", "log"]]] = None
 
     def compile(
         self, 
         estimator: Estimator, 
         n_estimators: int = 10, 
         max_samples: Optional[int] = None,
-        max_features: Optional[Literal["sqrt", "log"]] = None,
+        max_features: Optional[Union[int, Literal["sqrt", "log"]]] = None,
     ):
         self.estimator = estimator
         self.max_features = max_features

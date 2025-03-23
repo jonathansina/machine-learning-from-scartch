@@ -115,6 +115,9 @@ class IdentificationTree:
                 raise ValueError(f"Unknown regression impurity measure: {impurity_type}")
 
     def fit(self, x_train: np.ndarray, y_train: np.ndarray):
+        # if y_train.ndim == 1:
+        #     y_train = y_train.reshape(y_train.shape[0], 1)
+
         if self.impurity_measure is None:
             raise ValueError("You must call compile() before training the model")
 
