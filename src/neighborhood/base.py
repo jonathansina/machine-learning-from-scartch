@@ -1,5 +1,5 @@
 import sys
-from typing import Union, Optional
+from typing import Union, Optional, Literal
 
 import numpy as np
 
@@ -52,16 +52,20 @@ class NearestNeighbor:
             raise ValueError("Metrics must be a string or a DistanceMetric instance")
         
     def _set_algorithm(self, algorithm: str):
-        if algorithm == "brute-force":
+        if algorithm == "brute_force":
             self.search_algorithm = BruteForceSearch()
 
-        elif algorithm == "kd-tree":
+        elif algorithm == "kd_tree":
             self.search_algorithm = KDTreeSearch()
 
         else:
-            raise ValueError("Algorithm must be either 'brute-force' or 'kd-tree'")
+            raise ValueError("Algorithm must be either 'brute_force' or 'kd_tree'")
 
-    def compile(self, k: int, metrics: str = "euclidean", algorithm: str = "brute-force"):
+    def compile(
+        self, k: int, 
+        algorithm: Literal["brute_force", "kd_tree"] = "brute_force",
+        metrics: Union[DistanceMetric, Literal["euclidean", "manhattan", "minkowski", "chebyshev", "cosine", "jaccard"]] = "euclidean"
+    ):
         self.k = k
         self._set_algorithm(algorithm)
         self._set_distance_metrics(metrics)

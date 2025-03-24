@@ -52,7 +52,7 @@ class GradientBoostedRegressionTree:
         
         self._set_impurity_function(impurity_type)
 
-    def fit(self, x_train: np.ndarray, y_train: np.ndarray, verbose: int = 2):
+    def fit(self, x_train: np.ndarray, y_train: np.ndarray, verbose: int = 1):
         if self.impurity_type is None:
             raise ValueError("The model is not compiled yet. Please call the compile method before fit.")
 
@@ -81,9 +81,6 @@ class GradientBoostedRegressionTree:
             if verbose >= 1:
                 print(f"-------------------[Iteration {i}/{self.n_estimators}]---------------------")
                 print('Error :', self.errors[-1])
-
-        if verbose >= 0:
-            self.plot_loss()
 
     def predict(self, x: np.ndarray) -> np.ndarray:
         if self.forest is None:

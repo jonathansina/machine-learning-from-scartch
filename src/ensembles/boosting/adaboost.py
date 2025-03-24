@@ -54,7 +54,7 @@ class AdaBoostClassifier:
             raise ValueError(f"Unsupported loss function: {loss}")
     
 
-    def fit(self, x_train: np.ndarray, y_train: np.ndarray, verbose: int = 2):
+    def fit(self, x_train: np.ndarray, y_train: np.ndarray, verbose: int = 1):
         if self.impurity_type is None:
             raise ValueError("The model is not compiled yet. Please call the compile method before fit.")
 
@@ -98,9 +98,6 @@ class AdaBoostClassifier:
                 print(f'Estimator Error: {error:.4f}')
                 print(f'Ensemble Error: {ensemble_error:.4f}')
                 print(f'Estimator Weight: {estimator_weight:.4f}')
-        
-        if verbose >= 0:
-            self.plot_loss()
 
     def predict(self, x: np.ndarray) -> np.ndarray:
         if len(self.forest) == 0:

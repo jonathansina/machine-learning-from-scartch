@@ -50,7 +50,7 @@ class MeanAbsoluteError(RegressionImpurityMeasure):
         return np.mean(np.abs(actual - predicted))
     
     def derivative(self, actual: np.ndarray, predicted: float) -> float:
-        return np.where(actual - predicted < 0, -1, 1)
+        return -np.where(actual - predicted < 0, -1, 1)
 
 
 class Huber(RegressionImpurityMeasure):
@@ -62,11 +62,12 @@ class Huber(RegressionImpurityMeasure):
         is_small_error = np.abs(error) <= self.delta
         squared_loss = 0.5 * (error ** 2)
         linear_loss = self.delta * (np.abs(error) - 0.5 * self.delta)
+
         return np.mean(np.where(is_small_error, squared_loss, linear_loss))
     
     def derivative(self, actual: np.ndarray, predicted: float) -> float:
         error = actual - predicted
-        return np.where(
+        return -np.where(
             np.abs(error) <= self.delta, 
             error, 
             np.where(error < 0, -self.delta, self.delta)

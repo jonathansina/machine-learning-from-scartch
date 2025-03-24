@@ -37,7 +37,7 @@ class TrainingStrategy(ABC):
             penalty_term = self.regularizer.derivative(model.weight_matrix)
             
         delta_gradient = self.loss.derivative(y_pred, y_true)
-        gradient = (delta_gradient * x + penalty_term)
+        gradient = (delta_gradient * x - penalty_term)
         
         return delta_gradient, gradient
 

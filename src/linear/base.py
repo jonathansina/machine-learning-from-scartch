@@ -41,7 +41,7 @@ class BaseLinearModel(ABC):
         
         self._validate_loss_function(self.loss)
 
-    def fit(self, x: np.ndarray, y: np.ndarray, epochs: int, batch_size: int = 1, verbose: int = 2):
+    def fit(self, x: np.ndarray, y: np.ndarray, epochs: int, batch_size: int = 1, verbose: int = 1):
         if self.loss is None:
             raise ValueError("The model is not compiled yet. Please call the compile method before fit.")
 
@@ -60,14 +60,8 @@ class BaseLinearModel(ABC):
             cost = training_strategy.train_epoch(mini_batches, self)
             self.cost.append(cost)
             
-            if verbose >= 2:
+            if verbose >= 1:
                 self._print_epoch_info(epoch, epochs, cost)
-                
-        if verbose >= 1:
-            self._plot_loss(epochs)
-            
-        if verbose >= 0:
-            print('Optimization Finished')
     
     def _initialize_parameters(self, x: np.ndarray, y: np.ndarray):
         self.weight_matrix = np.random.uniform(-1, 1, size=(y.shape[1], x.shape[1]))
