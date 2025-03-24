@@ -6,20 +6,20 @@ from path_handler import PathManager
 path_manager = PathManager()
 sys.path.append(str(path_manager.get_base_directory()))
 
-from src.neighborhood.base import NearestNeighbor
-from src.neighborhood.predictor import RegressorPredictor, ClassifierPredictor
+from src.neighborhood.builder import NearestNeighborBuilder
+from src.neighborhood.components.predictor import RegressorPredictor, ClassifierPredictor
 
 
 class NearestNeighborFactory:
     @staticmethod
-    def create(strategy_type: Literal["classifier", "regressor"]) -> NearestNeighbor:
+    def create(strategy_type: Literal["classifier", "regressor"]) -> NearestNeighborBuilder:
         if strategy_type == "classifier":
-            return NearestNeighbor(
+            return NearestNeighborBuilder(
                 predictor=ClassifierPredictor()
             )
         
         elif strategy_type == "regressor":
-            return NearestNeighbor(
+            return NearestNeighborBuilder(
                 predictor=RegressorPredictor()
             )
         

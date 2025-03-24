@@ -37,6 +37,9 @@ class LinearRegressionBuilder:
         return self
         
     def build(self):
+        if self.loss is None or self.metric is None or self.search_algorithm is None:
+            raise ValueError("The model is not compiled yet. Please call the compile method before build.")
+
         return LinearRegression(
             bias=self.bias,
             loss=self.loss,

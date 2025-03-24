@@ -9,8 +9,8 @@ from path_handler import PathManager
 path_manager = PathManager()
 sys.path.append(str(path_manager.get_base_directory()))
 
-from src.neighborhood.tree import KDTree, KDNode
-from src.neighborhood.distances import DistanceMetric
+from src.neighborhood.components.tree import KDTree, KDNode
+from src.neighborhood.components.distances import DistanceMetric
 
 
 class SearchAlgorithm(ABC):
