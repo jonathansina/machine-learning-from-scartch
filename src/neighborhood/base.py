@@ -67,9 +67,15 @@ class NearestNeighbor:
         self._set_distance_metrics(metrics)
 
     def fit(self, x_train: np.ndarray, y_train: np.ndarray):
+        if self.k is None:
+            raise ValueError("The model is not compiled yet. Please call the compile method before fit.")
+
         self.search_algorithm.fit(x_train, y_train)
 
     def predict(self, x: np.ndarray) -> Union[int, float, np.ndarray]:
+        if self.search_algorithm.fitted is False:
+            raise ValueError("The model is not trained yet. Please call the fit method before predict.")
+
         if x.ndim > 1 and x.shape[0] > 1:
             return np.array([self.predict(x[i]) for i in range(x.shape[0])])
         

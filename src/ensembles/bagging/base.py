@@ -34,11 +34,14 @@ class BaseBagging(ABC):
         max_features: Optional[Union[int, Literal["sqrt", "log"]]] = None,
     ):
         self.estimator = estimator
-        self.max_features = max_features
         self.max_samples = max_samples
+        self.max_features = max_features
         self.n_estimators = n_estimators
 
     def fit(self, x_train: np.ndarray, y_train: np.ndarray, verbose: int = 2, **kwargs):
+        if self.estimator is None:
+            raise ValueError("The model is not compiled yet. Please call the compile method before fit.")
+
         self.max_features = FeatureUtils.get_feature_count(self.max_features, x_train.shape[1])
         
         x_samples, y_samples = Bootstrap.create_samples(
@@ -61,8 +64,16 @@ class BaseBagging(ABC):
                     print(f"Training Error: {training_error}")
 
     def predict(self, x: np.ndarray) -> np.ndarray:
+        if self.estimator_stack is None:
+            raise ValueError("The model is not trained yet. Please call the fit method before predict.")
+
         if x.T.shape != x.shape and x.shape[0] != 1:
-            return np.array([self.predict(x[i]) for i in range(x.shape[0])])
+            return np.array(
+                [
+                    self.predict(x[i]) 
+                    for i in range(x.shape[0])
+                ]
+            )
         
         predictions = [
             model.predict(x) 

@@ -25,12 +25,14 @@ class SearchAlgorithm(ABC):
 
 class BruteForceSearch(SearchAlgorithm):
     def __init__(self):
+        self.fitted: bool = False
         self.x_train: Optional[np.ndarray] = None
         self.y_train: Optional[np.ndarray] = None
     
     def fit(self, x_train: np.ndarray, y_train: np.ndarray):
         self.x_train = x_train
         self.y_train = y_train
+        self.fitted = True
     
     def find_neighbors(self, x: np.ndarray, k: int, metric: DistanceMetric) -> np.ndarray:
         distances = [
@@ -44,11 +46,13 @@ class BruteForceSearch(SearchAlgorithm):
 
 class KDTreeSearch(SearchAlgorithm):
     def __init__(self):
+        self.fitted: bool = False
         self.tree: Optional[KDTree] = None
         self.knn_set: List[Tuple[KDNode, float]] = []
     
     def fit(self, x_train: np.ndarray, y_train: np.ndarray):
         self.tree = KDTree(values=x_train, labels=y_train)
+        self.fitted = True
     
     def find_neighbors(self, x: np.ndarray, k: int, metric: DistanceMetric) -> List:
         self.knn_set: List[Tuple[KDNode, float]] = []

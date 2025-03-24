@@ -119,7 +119,7 @@ class IdentificationTree:
 
     def fit(self, x_train: np.ndarray, y_train: np.ndarray):
         if self.impurity_measure is None:
-            raise ValueError("You must call compile() before training the model")
+            raise ValueError("The model is not compiled yet. Please call the compile method before fit.")
 
         self.features_count = x_train.shape[1]
         n_features_to_use = FeatureUtils.get_feature_count(self.max_features, self.features_count)
@@ -129,6 +129,9 @@ class IdentificationTree:
         self.root = self._build_tree(data, 0)
 
     def predict(self, x: np.ndarray) -> Union[np.ndarray, Any]:
+        if self.root is None:
+            raise ValueError("The model is not trained yet. Please call the fit method before predict")
+
         if len(x.shape) > 1 and x.shape[0] > 1:
             return np.array([self._traverse(xi, self.root) for xi in x])
 

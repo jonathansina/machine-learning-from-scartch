@@ -42,6 +42,9 @@ class BaseLinearModel(ABC):
         self._validate_loss_function(self.loss)
 
     def fit(self, x: np.ndarray, y: np.ndarray, epochs: int, batch_size: int = 1, verbose: int = 2):
+        if self.loss is None:
+            raise ValueError("The model is not compiled yet. Please call the compile method before fit.")
+
         self.epochs += epochs
 
         if y.ndim == 1:
@@ -85,7 +88,7 @@ class BaseLinearModel(ABC):
 
         return MiniBatchTrainingStrategy(self.optimizer, self.loss, self.regularizer)
 
-    def plot_loss_trend(self):
+    def _plot_loss(self):
         plt.plot(range(self.epochs), self.cost)
         plt.xlabel('Number of Epochs')
         plt.ylabel('Cost')

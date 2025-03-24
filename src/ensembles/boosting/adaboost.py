@@ -19,8 +19,8 @@ class AdaBoostClassifier:
         self.max_depth: Optional[int] = None
         self.loss_type: Optional[str] = None
         self.n_estimators: Optional[int] = None
-        self._loss_fn: Optional[LossFunction] = None
         self.classes_: Optional[np.ndarray] = None
+        self._loss_fn: Optional[LossFunction] = None
         self.forest: List[Tuple[IdentificationTree, float]] = []
         self.max_features: Optional[Union[int, Literal["sqrt", "log"]]] = None
 
@@ -55,6 +55,9 @@ class AdaBoostClassifier:
     
 
     def fit(self, x_train: np.ndarray, y_train: np.ndarray, verbose: int = 2):
+        if self.impurity_type is None:
+            raise ValueError("The model is not compiled yet. Please call the compile method before fit.")
+
         n_samples = x_train.shape[0]
         self.classes_ = np.unique(y_train)
         
@@ -101,7 +104,7 @@ class AdaBoostClassifier:
 
     def predict(self, x: np.ndarray) -> np.ndarray:
         if len(self.forest) == 0:
-            raise ValueError("Model has not been fitted yet.")
+            raise ValueError("The model is not trained yet. Please call the fit method before predict.")
             
         if len(self.classes_) == 2:
             return self._predict_binary(x)
