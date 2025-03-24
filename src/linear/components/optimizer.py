@@ -104,10 +104,9 @@ class SGD(Optimizer):
 
 class NewtonMethod(Optimizer):
     def __init__(self):
-        self.name = 'newton-method'
+        self.name = 'newton_method'
 
-    def __call__(self, weights: np.ndarray, bias: np.ndarray, gradient: np.ndarray, delta_gradient: np.ndarray,
-                 hessian: np.matrix):
+    def __call__(self, weights: np.ndarray, bias: np.ndarray, gradient: np.ndarray, delta_gradient: np.ndarray, hessian: np.matrix):
         hessian_inverse = hessian.getI()
         weights = weights + hessian_inverse[0] * gradient
         bias = bias + hessian_inverse[1] * delta_gradient

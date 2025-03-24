@@ -41,7 +41,6 @@ class TrainingStrategy(ABC):
         
         return delta_gradient, gradient
 
-    
     def update_parameters(
         self, 
         model: Type[Any], 

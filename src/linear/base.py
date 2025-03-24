@@ -31,7 +31,7 @@ class BaseLinearModel(ABC):
         
     def compile(
         self, 
-        optimizer: Union[Literal["adam", "adagrad", "rmsprop", "sgd", "newton-method"], Optimizer], 
+        optimizer: Union[Literal["adam", "adagrad", "rmsprop", "sgd", "newton_method"], Optimizer], 
         loss: Union[Literal["mse", "mae", "huber", "binary_crossentropy", "log_loss", "hinge"], LossFunction], 
         regularizer: Optional[Union[Literal["l1", "l2", "l1l2"], Regularizer]] = None
     ):
@@ -74,10 +74,7 @@ class BaseLinearModel(ABC):
         self.bias = np.random.uniform(-1, 1, size=(y.shape[1]))
     
     def _determine_batch_size(self, x: np.ndarray, requested_batch_size: int) -> int:
-        if (
-            (self.optimizer.name == "gradient-descent" and requested_batch_size == 1) 
-            or self.optimizer.name == "newton-method"
-        ):
+        if self.optimizer.name == "newton_method":
             return x.shape[0]
 
         return requested_batch_size

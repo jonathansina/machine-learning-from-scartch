@@ -8,11 +8,11 @@ class AcquisitionFunction(ABC):
     @property
     @abstractmethod
     def name(self) -> str:
-        pass
+        raise NotImplementedError("Subclasses must implement this method")
     
     @abstractmethod
     def __call__(self, y_pred: np.ndarray, y_std: np.ndarray, **kwargs) -> np.ndarray:
-        pass
+        raise NotImplementedError("Subclasses must implement this method")
 
 class POI(AcquisitionFunction):
     @property
