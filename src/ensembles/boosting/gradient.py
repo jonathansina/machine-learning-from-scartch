@@ -13,7 +13,7 @@ from src.tree.factory import IdentificationTreeFactory, IdentificationTree
 from src.tree.impurity.regression import MeanSquaredError, MeanAbsoluteError, Huber, ImpurityMeasure
 
 
-class GradientBoostedRegressionTree(object):
+class GradientBoostedRegressionTree:
     def __init__(self):
         self.y_mean = 0
         self.errors: List[float] = []
@@ -24,20 +24,7 @@ class GradientBoostedRegressionTree(object):
         self.impurity_type: Optional[Tuple[str, ImpurityMeasure]] = None
         self.max_features: Optional[Union[int, Literal["sqrt", "log"]]] = None
 
-    def compile(
-        self, 
-        max_depth: int = 3,
-        n_estimators: int = 10, 
-        learning_rate: int = 0.1,
-        max_features: Optional[Union[int, Literal["sqrt", "log"]]] = None,
-        impurity_type: Literal["squared_loss", "absolute_loss", "huber"] = "squared_loss"
-    ):
-
-        self.max_depth = max_depth
-        self.n_estimators = n_estimators
-        self.max_features = max_features
-        self.learning_rate = learning_rate
-    
+    def _set_impurity_function(self, impurity_type: str):
         if impurity_type == "squared_loss":
             self.impurity_type = ("mse", MeanSquaredError())
 
@@ -49,6 +36,21 @@ class GradientBoostedRegressionTree(object):
 
         else:
             raise ValueError(f"Unknown impurity measure: {impurity_type}")
+
+    def compile(
+        self, 
+        max_depth: int = 3,
+        n_estimators: int = 10, 
+        learning_rate: int = 0.1,
+        max_features: Optional[Union[int, Literal["sqrt", "log"]]] = None,
+        impurity_type: Literal["squared_loss", "absolute_loss", "huber"] = "squared_loss"
+    ):
+        self.max_depth = max_depth
+        self.n_estimators = n_estimators
+        self.max_features = max_features
+        self.learning_rate = learning_rate
+        
+        self._set_impurity_function(impurity_type)
 
     def fit(self, x_train: np.ndarray, y_train: np.ndarray, verbose: int = 2):
         if y_train.ndim == 1:

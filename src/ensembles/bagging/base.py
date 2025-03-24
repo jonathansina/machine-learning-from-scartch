@@ -19,8 +19,8 @@ from src.ensembles.bagging.aggregator import ClassifierAggregator, RegressorAggr
 
 class BaseBagging(ABC):
     def __init__(self):
-        self.max_samples: int = None
-        self.n_estimators: int = None
+        self.max_samples: Optional[int] = None
+        self.n_estimators: Optional[int] = None
         self.estimator: Optional[Estimator] = None
         self.estimator_stack: List[Estimator] = []
         self.aggregator: Optional[PredictionAggregator]  = None

@@ -8,7 +8,7 @@ sys.path.append(str(path_manager.get_base_directory()))
 
 from src.linear.components.optimizer import Optimizer, AdaGrad, RMSProp, ADAM, SGD, NewtonMethod
 from src.linear.components.regularizer import Regularizer, L1Regularizer, L2Regularizer, ElasticNetRegularizer
-from src.linear.components.loss import Loss, MeanSquaredError, MeanAbsoluteError, BinaryCrossEntropy, Hinge, LogLoss, Huber
+from src.linear.components.loss import LossFunction, MeanSquaredError, MeanAbsoluteError, BinaryCrossEntropy, Hinge, LogLoss, Huber
 
 
 class ComponentFactory:
@@ -58,11 +58,11 @@ class ComponentFactory:
         raise ValueError(f'Invalid regularizer: {regularizer}')
     
     @classmethod
-    def create_loss(cls, loss: Union[str, Loss, None]) -> Loss:
+    def create_loss(cls, loss: Union[str, LossFunction, None]) -> LossFunction:
         if loss is None:
             return None
 
-        if isinstance(loss, Loss):
+        if isinstance(loss, LossFunction):
             return loss
 
         if loss in cls.LOSS_MAP:

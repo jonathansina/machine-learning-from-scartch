@@ -9,13 +9,13 @@ from path_handler import PathManager
 path_manager = PathManager()
 sys.path.append(str(path_manager.get_base_directory()))
 
-from src.linear.components.loss import Loss
+from src.linear.components.loss import LossFunction
 from src.linear.components.optimizer import Optimizer
 from src.linear.components.regularizer import Regularizer
 
 
 class TrainingStrategy(ABC):
-    def __init__(self, optimizer: Optimizer, loss: Loss, regularizer: Regularizer):
+    def __init__(self, optimizer: Optimizer, loss: LossFunction, regularizer: Regularizer):
         self.loss = loss
         self.optimizer = optimizer
         self.regularizer = regularizer

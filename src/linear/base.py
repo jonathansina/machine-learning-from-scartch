@@ -10,7 +10,7 @@ from path_handler import PathManager
 path_manager = PathManager()
 sys.path.append(str(path_manager.get_base_directory()))
 
-from src.linear.components.loss import Loss
+from src.linear.components.loss import LossFunction
 from src.linear.components.optimizer import Optimizer
 from src.linear.components.regularizer import Regularizer
 from src.linear.components.batch import MiniBatchGenerator
@@ -23,7 +23,7 @@ class BaseLinearModel(ABC):
         self.epochs = 0
         self.cost: List[float] = []
         self.bias = np.array([])
-        self.loss: Optional[Loss] = None
+        self.loss: Optional[LossFunction] = None
         self.weight_matrix = np.array([])
         self.optimizer: Optional[Optimizer] = None
         self.batch_generator = MiniBatchGenerator()
@@ -32,11 +32,11 @@ class BaseLinearModel(ABC):
     def compile(
         self, 
         optimizer: Union[Literal["adam", "adagrad", "rmsprop", "sgd", "newton-method"], Optimizer], 
-        loss: Union[Literal["mse", "mae", "huber", "binary_crossentropy", "log_loss", "hinge"], Loss], 
+        loss: Union[Literal["mse", "mae", "huber", "binary_crossentropy", "log_loss", "hinge"], LossFunction], 
         regularizer: Optional[Union[Literal["l1", "l2", "l1l2"], Regularizer]] = None
     ):
-        self.optimizer = ComponentFactory.create_optimizer(optimizer)
         self.loss = ComponentFactory.create_loss(loss)
+        self.optimizer = ComponentFactory.create_optimizer(optimizer)
         self.regularizer = ComponentFactory.create_regularizer(regularizer)
         
         self._validate_loss_function(self.loss)

@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 
-class Loss(ABC):
+class LossFunction(ABC):
     @abstractmethod
     def __call__(self, h: np.ndarray, y: np.ndarray) -> float:
         raise NotImplementedError("Subclasses must implement this method")
@@ -16,7 +16,7 @@ class Loss(ABC):
         raise NotImplementedError("Second derivative not implemented for this loss function")
 
 
-class MeanSquaredError(Loss):
+class MeanSquaredError(LossFunction):
     def __init__(self):
         self.name = 'mean_squared_error'
 
@@ -30,7 +30,7 @@ class MeanSquaredError(Loss):
         return np.full_like(h, 2)
 
 
-class MeanAbsoluteError(Loss):
+class MeanAbsoluteError(LossFunction):
     def __init__(self):
         self.name = 'mean_absolute_error'
 
@@ -41,7 +41,7 @@ class MeanAbsoluteError(Loss):
         return np.where(y - h < 0, -1, 1)
 
 
-class Huber(Loss):
+class Huber(LossFunction):
     def __init__(self, delta: float = 1):
         self.delta = delta
         self.name = 'huber_loss'
@@ -69,7 +69,7 @@ class Huber(Loss):
         )
 
 
-class LogLoss(Loss):
+class LogLoss(LossFunction):
     def __init__(self):
         self.name = 'log_loss'
 
@@ -80,7 +80,7 @@ class LogLoss(Loss):
         return -y / (1 + np.exp(h * y))
 
 
-class BinaryCrossEntropy(Loss):
+class BinaryCrossEntropy(LossFunction):
     def __init__(self, epsilon: float = 1e-9):
         self.name = 'binary_crossentropy'
         self.epsilon = epsilon
@@ -94,7 +94,7 @@ class BinaryCrossEntropy(Loss):
         return (h_clipped - y) / (h_clipped * (1 - h_clipped))
 
 
-class Hinge(Loss):
+class Hinge(LossFunction):
     def __init__(self, p: int = 1):
         self.name = 'hinge_loss'
         self.p = p

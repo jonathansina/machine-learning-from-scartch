@@ -28,8 +28,8 @@ class NearestNeighbor:
         self.k: Optional[int] = None
         self.metric: Optional[DistanceMetric] = None
         self.search_algorithm: Optional[SearchAlgorithm] = None
-
-    def compile(self, k: int, metrics: str = "euclidean", algorithm: str = "brute-force"):
+        
+    def _set_distance_metrics(self, metrics: str):
         metric_map = {
             "euclidean": Euclidean(),
             "manhattan": Manhattan(),
@@ -51,7 +51,7 @@ class NearestNeighbor:
         else:
             raise ValueError("Metrics must be a string or a DistanceMetric instance")
         
-
+    def _set_algorithm(self, algorithm: str):
         if algorithm == "brute-force":
             self.search_algorithm = BruteForceSearch()
 
@@ -60,8 +60,11 @@ class NearestNeighbor:
 
         else:
             raise ValueError("Algorithm must be either 'brute-force' or 'kd-tree'")
-        
+
+    def compile(self, k: int, metrics: str = "euclidean", algorithm: str = "brute-force"):
         self.k = k
+        self._set_algorithm(algorithm)
+        self._set_distance_metrics(metrics)
 
     def fit(self, x_train: np.ndarray, y_train: np.ndarray):
         self.search_algorithm.fit(x_train, y_train)

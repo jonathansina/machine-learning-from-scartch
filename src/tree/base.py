@@ -79,16 +79,9 @@ class IdentificationTree:
             return self._traverse(x, node.left_child)
         else:
             return self._traverse(x, node.right_child)
-    
-    def compile(
-        self, 
-        impurity_type: Literal["gini", "entropy", "mse", "mae", "huber"], 
-        max_depth: int = 10,
-        max_features: Optional[Union[int, Literal["sqrt", "log"]]] = None
-    ):
-        self.max_depth = max_depth
-        self.max_features = max_features
         
+        
+    def _set_impurity_function(self, impurity_type: str):
         classification_impurity: Dict[str, ] = {
             "gini": Gini(),
             "entropy": Entropy()
@@ -99,7 +92,7 @@ class IdentificationTree:
             "mae": MeanAbsoluteError(),
             "huber": Huber()
         }
-
+    
         if isinstance(self.builder_strategy, ClassificationTreeBuilder):
             if impurity_type in classification_impurity:
                 self.impurity_measure = classification_impurity[impurity_type]
@@ -114,10 +107,17 @@ class IdentificationTree:
             else:
                 raise ValueError(f"Unknown regression impurity measure: {impurity_type}")
 
-    def fit(self, x_train: np.ndarray, y_train: np.ndarray):
-        # if y_train.ndim == 1:
-        #     y_train = y_train.reshape(y_train.shape[0], 1)
+    def compile(
+        self, 
+        impurity_type: Literal["gini", "entropy", "mse", "mae", "huber"], 
+        max_depth: int = 10,
+        max_features: Optional[Union[int, Literal["sqrt", "log"]]] = None
+    ):
+        self.max_depth = max_depth
+        self.max_features = max_features
+        self._set_impurity_function(impurity_type)
 
+    def fit(self, x_train: np.ndarray, y_train: np.ndarray):
         if self.impurity_measure is None:
             raise ValueError("You must call compile() before training the model")
 
