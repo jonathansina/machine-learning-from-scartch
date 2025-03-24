@@ -8,7 +8,7 @@ from path_handler import PathManager
 path_manager = PathManager()
 sys.path.append(str(path_manager.get_base_directory()))
 
-from src.tree.impurity.base import ImpurityMeasure
+from src.tree.components.impurity.base import ImpurityMeasure
 
 
 class ClassificationImpurityMeasure(ImpurityMeasure, ABC):

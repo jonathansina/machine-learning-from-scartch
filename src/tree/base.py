@@ -1,5 +1,5 @@
 import sys
-from typing import Any, Literal, Tuple, Union, Optional, Dict
+from typing import Any, Literal, Tuple, Union, Optional
 
 import numpy as np
 
@@ -8,20 +8,25 @@ from path_handler import PathManager
 path_manager = PathManager()
 sys.path.append(str(path_manager.get_base_directory()))
 
-from src.tree.node import Node
-from src.tree.utils import TreeUtils, FeatureUtils
-from src.tree.impurity.base import ImpurityMeasure
-from src.tree.impurity.classification import Gini, Entropy
-from src.tree.impurity.regression import MeanSquaredError, MeanAbsoluteError, Huber
-from src.tree.strategy import TreeBuilderStrategy, ClassificationTreeBuilder, RegressionTreeBuilder
+from src.tree.components.node import Node
+from src.tree.components.strategy import TreeBuilderStrategy
+from src.tree.components.utils import TreeUtils, FeatureUtils
+from src.tree.components.impurity.base import ImpurityMeasure
 
 
 class IdentificationTree:
-    def __init__(self, builder_strategy: TreeBuilderStrategy,):
-        self.max_depth: Optional[int] = None
+    def __init__(
+        self, 
+        max_depth: int, 
+        impurity_type: ImpurityMeasure, 
+        builder_strategy: TreeBuilderStrategy, 
+        max_features: Union[int, Literal["log", "sqrt"]]
+    ):
+
+        self.max_depth = max_depth
+        self.max_features = max_features
+        self.impurity_measure = impurity_type
         self.builder_strategy = builder_strategy
-        self.impurity_measure: Optional[ImpurityMeasure] = None
-        self.max_features: Optional[Union[int, Literal["log", "sqrt"]]] = None
         
         self.depth = 0
         self.root: Optional[Node] = None
@@ -79,43 +84,6 @@ class IdentificationTree:
             return self._traverse(x, node.left_child)
         else:
             return self._traverse(x, node.right_child)
-        
-        
-    def _set_impurity_function(self, impurity_type: str):
-        classification_impurity: Dict[str, ] = {
-            "gini": Gini(),
-            "entropy": Entropy()
-        }
-        
-        regression_impurity = {
-            "mse": MeanSquaredError(),
-            "mae": MeanAbsoluteError(),
-            "huber": Huber()
-        }
-    
-        if isinstance(self.builder_strategy, ClassificationTreeBuilder):
-            if impurity_type in classification_impurity:
-                self.impurity_measure = classification_impurity[impurity_type]
-            
-            else:
-                raise ValueError(f"Unknown classification impurity measure: {impurity_type}")
-        
-        elif isinstance(self.builder_strategy, RegressionTreeBuilder):
-            if impurity_type in regression_impurity:
-                self.impurity_measure = regression_impurity[impurity_type]
-            
-            else:
-                raise ValueError(f"Unknown regression impurity measure: {impurity_type}")
-
-    def compile(
-        self, 
-        impurity_type: Literal["gini", "entropy", "mse", "mae", "huber"], 
-        max_depth: int = 10,
-        max_features: Optional[Union[int, Literal["sqrt", "log"]]] = None
-    ):
-        self.max_depth = max_depth
-        self.max_features = max_features
-        self._set_impurity_function(impurity_type)
 
     def fit(self, x_train: np.ndarray, y_train: np.ndarray):
         if self.impurity_measure is None:
