@@ -7,11 +7,11 @@ from path_handler import PathManager
 path_manager = PathManager()
 sys.path.append(str(path_manager.get_base_directory()))
 
-from src.linear.base import BaseLinearModel
+from src.linear.base import LinearModel
 from src.linear.components.loss import Hinge
 
 
-class SVM(BaseLinearModel):
+class SVM(LinearModel):
     def _validate_loss_function(self, loss):
         if loss == 'hinge' or isinstance(loss, Hinge):
             return None

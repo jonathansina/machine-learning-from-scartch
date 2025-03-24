@@ -1,6 +1,6 @@
 import sys
+from typing import List
 from abc import ABC, abstractmethod
-from typing import Optional, Union, Literal, List
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -14,32 +14,29 @@ from src.linear.components.loss import LossFunction
 from src.linear.components.optimizer import Optimizer
 from src.linear.components.regularizer import Regularizer
 from src.linear.components.batch import MiniBatchGenerator
-from src.linear.components.factory import ComponentFactory
-from src.linear.trainer import MiniBatchTrainingStrategy, SGDTrainingStrategy
+from src.linear.components.trainer import MiniBatchTrainingStrategy, SGDTrainingStrategy
 
 
-class BaseLinearModel(ABC):
-    def __init__(self):
+class LinearModel(ABC):
+    def __init__(
+        self, 
+        bias: np.ndarray, 
+        loss: LossFunction, 
+        optimizer: Optimizer, 
+        regularizer: Regularizer,
+        weight_matrix: np.ndarray
+    ):
         self.epochs = 0
         self.cost: List[float] = []
-        self.bias = np.array([])
-        self.loss: Optional[LossFunction] = None
-        self.weight_matrix = np.array([])
-        self.optimizer: Optional[Optimizer] = None
         self.batch_generator = MiniBatchGenerator()
-        self.regularizer: Optional[Regularizer] = None
         
-    def compile(
-        self, 
-        optimizer: Union[Literal["adam", "adagrad", "rmsprop", "sgd", "newton_method"], Optimizer], 
-        loss: Union[Literal["mse", "mae", "huber", "binary_crossentropy", "log_loss", "hinge"], LossFunction], 
-        regularizer: Optional[Union[Literal["l1", "l2", "l1l2"], Regularizer]] = None
-    ):
-        self.loss = ComponentFactory.create_loss(loss)
-        self.optimizer = ComponentFactory.create_optimizer(optimizer)
-        self.regularizer = ComponentFactory.create_regularizer(regularizer)
+        self.loss = loss
+        self.bias = bias
+        self.optimizer = optimizer
+        self.regularizer = regularizer
+        self.weight_matrix = weight_matrix
         
-        self._validate_loss_function(self.loss)
+        self._validate_loss_function(loss)
 
     def fit(self, x: np.ndarray, y: np.ndarray, epochs: int, batch_size: int = 1, verbose: int = 1):
         if self.loss is None:

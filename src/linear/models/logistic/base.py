@@ -7,11 +7,11 @@ from path_handler import PathManager
 path_manager = PathManager()
 sys.path.append(str(path_manager.get_base_directory()))
 
-from src.linear.base import BaseLinearModel
+from src.linear.base import LinearModel
 from src.linear.components.loss import LogLoss, BinaryCrossEntropy
 
 
-class LogisticRegression(BaseLinearModel):
+class LogisticRegression(LinearModel):
     def _validate_loss_function(self, loss):
         if isinstance(loss, LogLoss) or isinstance(loss, BinaryCrossEntropy) or loss == 'log_loss' or loss == 'binary_crossentropy':
             return None

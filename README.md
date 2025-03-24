@@ -1,62 +1,156 @@
-# Machine Learning from Scratch
+# Machine Learning From Scratch
 
-This repository contains implementations of various machine learning models developed from scratch using Python. The goal is to understand the inner workings of these algorithms without relying on any machine learning libraries.
+This project implements various machine learning algorithms from scratch in Python. It provides a comprehensive educational toolkit to understand the fundamentals of machine learning algorithms by implementing them with basic numerical libraries like NumPy.
 
 ## Table of Contents
-- [Introduction](#introduction)
-- [Implemented Models](#implemented-models)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
+- Project Structure
+- Installation
+- Implemented Algorithms
+    - Linear Models
+        - Linear Regression
+        - Logistic Regression
+        - Linear Support Vector Machine (SVM) 
+    - Tree-based Models
+    - Ensemble Methods
+- Nearest Neighbors
+- Hyperparameter Tuning
+- Contributing
+- License
 
-## Introduction
+## Project Structure
+```
+machine-learning-from-scratch/
+│
+├── src/
+│   ├── linear/                # Linear models (regression, classification)
+│   │   ├── base.py            # Base linear model class
+│   │   ├── models/            # Specific model implementations
+│   │   └── components/        # Components (loss, optimizers, regularizers)
+│   │
+│   ├── tree/                  # Decision tree algorithms
+│   │   ├── base.py            # Base decision tree implementation
+│   │   ├── factory.py         # Tree factory patterns
+│   │   ├── impurity/          # Impurity measures
+│   │   └── test/              # Tests for tree models
+│   │
+│   ├── ensembles/             # Ensemble methods
+│   │   ├── bagging/           # Bagging implementations
+│   │   └── boosting/          # Boosting implementations
+│   │
+│   ├── neighborhood/          # Nearest neighbor models
+│   │   ├── base.py            # Base KNN implementation
+│   │   ├── distances.py       # Distance metrics
+│   │   ├── search.py          # Search algorithms
+│   │   └── test/              # Tests for KNN models
+│   │
+│   └── tunning/               # Hyperparameter tuning
+│       ├── base.py            # Bayesian optimization
+│       └── asquisition/       # Acquisition functions
+│
+└── README.md            # Project Documentation
+```
 
-This project involves coding various machine learning models from scratch in Python. It serves as an educational resource for understanding the fundamentals of machine learning.
-
-## Implemented Models
-
-The following models have been implemented:
-- Gradient Boosting Regression Trees (GBRT)
-- Bayesian Tuning Model
-- Bagging Model
-- Tree Models
-- Neighbor Package
+---
 
 ## Installation
+To use this project, follow these steps:
 
-To get started, clone the repository:
+```python
+# Clone the repository
+git clone https://github.com/yourusername/machine-learning-from-scratch.git
+cd machine-learning-from-scratch
 
-```bash
-git clone https://github.com/jonathansina/machine-learning-from-scartch.git
-cd machine-learning-from-scartch
-```
-
-Ensure you have Python installed. It is recommended to use a virtual environment:
-
-```bash
+# Create a virtual environment (optional but recommended)
 python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+source venv/bin/activate  # On Windows, use: venv\Scripts\activate
+
+# Install dependencies
+pip install numpy scipy matplotlib scikit-learn pandas seaborn
 ```
 
-## Usage
+---
 
-Each model can be found within its respective file. To run a specific model, execute the corresponding Python script. For example, to run the GBRT model:
+## Implemented Algorithms
+### 1. Linear Models
 
-```bash
-python gbrt.py
+#### Features:
+
+- Various optimization algorithms (SGD, AdaGrad, RMSProp, ADAM, Newton Method)
+- Multiple loss functions (MSE, MAE, Huber, Hinge, Binary Crossentropy, Log loss)
+- Regularization options (L1, L2, ElasticNet)
+- Mini-batch training support
+
+#### 1.1 Linear Regression
+
+Implemented by leveraging optimization techniques to reduce the discrepancy between predicted and actual values, ensuring the model learns effectively from the data.
+
+**Supported Loss Functions**: MSE, MAE, HUBER
+
+#### Example Usage
+```python
+import numpy as np
+from sklearn.datasets import make_regression
+from sklearn.model_selection import train_test_split
+
+from src.linear.components.optimizer import SGD
+from src.linear.models.linear import LinearRegression
+from src.linear.components.regularizer import L1Regularizer
+
+# Generate synthetic data
+X, y = make_regression(n_samples=100, n_features=5, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize and compile the model
+linear_model = LinearRegression()
+linear_model.compile(
+    optimizer=SGD(learning_rate=0.01, momentum=0.001),
+    loss="mse",
+    regularizer=L1Regularizer(_lambda=0.08)
+)
+
+# Train the model
+linear_model.fit(X_train, y_train, epochs=100, batch_size=10, verbose=1)
+
+# Make predictions
+predictions = linear_model.predict(X_test)
+mse = ((predictions - y_test) ** 2).mean()
+print(f"Mean Squared Error: {mse:.4f}")
 ```
 
-## Contributing
+#### 1.2 Logistic Regression
+Implemented similarly to linear regression but designed for classification tasks. Logistic regression uses a sigmoid activation function to map predictions to probabilities and optimizes loss functions such as Log Loss or Binary Crossentropy to improve classification accuracy.
 
-Contributions are welcome! Please follow these steps:
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Commit your changes (`git commit -m 'Add some feature'`).
-4. Push to the branch (`git push origin feature-branch`).
-5. Open a pull request.
+**Supported Loss Functions**: Log Loss, Binary Crossentropy
 
-## License
+#### Example Usage
+```python
+import numpy as np
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+from src.linear.components.optimizer import SGD
+from src.linear.models.linear import LogisticRegression
+from src.linear.components.regularizer import L2Regularizer
+
+# Generate synthetic data
+X, y = make_classification(n_samples=100, n_features=5, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize and compile the model
+linear_model = LogisticRegression()
+linear_model.compile(
+    optimizer=SGD(learning_rate=0.01, momentum=0.001),
+    loss="binary_crossentropy",
+    regularizer=L2Regularizer(_lambda=0.08)
+)
+
+# Train the model
+linear_model.fit(X_train, y_train, epochs=100, batch_size=10, verbose=1)
+
+# Make predictions
+predictions = linear_model.predict(X_test)
+accuracy = (predictions == y_test).mean()
+print(f"Logistic regression accuracy: {accuracy:.4f}")
+```
+
+#### 1.3 Linear Support Vector Machine (SVM)
