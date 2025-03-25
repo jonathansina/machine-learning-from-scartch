@@ -1,7 +1,7 @@
 import sys
 import copy
 import concurrent.futures
-from typing import Literal, List, Union, Callable
+from typing import Literal, List, Union, Callable, Optional
 
 import numpy as np
 
@@ -19,12 +19,12 @@ from src.ensembles.bagging.components.aggregator import PredictionAggregator
 class Bagging:
     def __init__(
         self, 
-        max_samples: int, 
         n_estimators: int, 
         estimator: Estimator, 
         error_metric: Callable,
+        max_samples: Optional[int], 
         aggregator: PredictionAggregator, 
-        max_features: Union[int, Literal["sqrt", "log"]]
+        max_features: Optional[Union[int, Literal["sqrt", "log"]]]
     ):
         self.estimator = estimator
         self.aggregator = aggregator

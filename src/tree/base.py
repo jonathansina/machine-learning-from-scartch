@@ -20,7 +20,7 @@ class IdentificationTree:
         max_depth: int, 
         impurity_type: ImpurityMeasure, 
         builder_strategy: TreeBuilderStrategy, 
-        max_features: Union[int, Literal["log", "sqrt"]]
+        max_features: Optional[Union[int, Literal["log", "sqrt"]]]
     ):
 
         self.max_depth = max_depth

@@ -9,50 +9,29 @@ from path_handler import PathManager
 path_manager = PathManager()
 sys.path.append(str(path_manager.get_base_directory()))
 
-from src.tree.factory import IdentificationTreeFactory, IdentificationTree
-from src.ensembles.boosting.loss import ExponentialLoss, LogisticLoss, SquaredLoss, LossFunction
+from src.tree.base import IdentificationTree
+from src.tree.factory import IdentificationTreeFactory
+from src.ensembles.boosting.components.loss import LossFunction
 
 
-class AdaBoostClassifier:
-    def __init__(self):
-        self.errors: List[float] = []
-        self.max_depth: Optional[int] = None
-        self.loss_type: Optional[str] = None
-        self.n_estimators: Optional[int] = None
-        self.classes_: Optional[np.ndarray] = None
-        self._loss_fn: Optional[LossFunction] = None
-        self.forest: List[Tuple[IdentificationTree, float]] = []
-        self.max_features: Optional[Union[int, Literal["sqrt", "log"]]] = None
-
-    def compile(
+class BoostingClassifier:
+    def __init__(
         self, 
+        max_depth: int, 
+        n_estimators: int, 
+        loss_fn: LossFunction, 
         impurity_type: Literal["gini", "entropy"],
-        max_depth: int = 1,
-        n_estimators: int = 50, 
-        max_features: Optional[Union[int, Literal["sqrt", "log"]]] = None,
-        loss: Literal["exponential", "logistic", "squared"] = "exponential"
+        max_features: Optional[Union[int, Literal["sqrt", "log"]]]
     ):
-        self.loss_type = loss
+        self._loss_fn = loss_fn
         self.max_depth = max_depth
         self.n_estimators = n_estimators
         self.max_features = max_features
         self.impurity_type = impurity_type
         
-        self._set_loss_function(loss)
-    
-    def _set_loss_function(self, loss: str):
-        if loss == "exponential":
-            self._loss_fn = ExponentialLoss()
-
-        elif loss == "logistic":
-            self._loss_fn = LogisticLoss()
-
-        elif loss == "squared":
-            self._loss_fn = SquaredLoss()
-
-        else:
-            raise ValueError(f"Unsupported loss function: {loss}")
-    
+        self.errors: List[float] = []
+        self.classes_: Optional[np.ndarray] = None
+        self.forest: List[Tuple[IdentificationTree, float]] = []
 
     def fit(self, x_train: np.ndarray, y_train: np.ndarray, verbose: int = 1):
         if self.impurity_type is None:

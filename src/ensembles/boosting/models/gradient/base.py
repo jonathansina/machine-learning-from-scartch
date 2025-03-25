@@ -9,48 +9,29 @@ from path_handler import PathManager
 path_manager = PathManager()
 sys.path.append(str(path_manager.get_base_directory()))
 
-from src.tree.factory import IdentificationTreeFactory, IdentificationTree
-from src.tree.impurity.regression import MeanSquaredError, MeanAbsoluteError, Huber, ImpurityMeasure
+from src.tree.base import IdentificationTree
+from src.tree.factory import IdentificationTreeFactory 
+from src.tree.components.impurity.regression import ImpurityMeasure
 
 
-class GradientBoostedRegressionTree:
-    def __init__(self):
+class BoostingRegressor:
+    def __init__(
+        self, 
+        max_depth: int, 
+        n_estimators: int, 
+        learning_rate: float, 
+        impurity_type: Tuple[str, ImpurityMeasure], 
+        max_features: Optional[Union[int, Literal["sqrt", "log"]]]
+    ):
         self.y_mean = 0
         self.errors: List[float] = []
-        self.max_depth: Optional[int] = None
-        self.n_estimators: Optional[int] = None
         self.forest: List[IdentificationTree] = []
-        self.learning_rate: Optional[float] = None
-        self.impurity_type: Optional[Tuple[str, ImpurityMeasure]] = None
-        self.max_features: Optional[Union[int, Literal["sqrt", "log"]]] = None
-
-    def _set_impurity_function(self, impurity_type: str):
-        if impurity_type == "squared_loss":
-            self.impurity_type = ("mse", MeanSquaredError())
-
-        elif impurity_type == "absolute_loss":
-            self.impurity_type = ("mae", MeanAbsoluteError())
-
-        elif impurity_type == "huber":
-            self.impurity_type = ("huber", Huber())
-
-        else:
-            raise ValueError(f"Unknown impurity measure: {impurity_type}")
-
-    def compile(
-        self, 
-        max_depth: int = 3,
-        n_estimators: int = 10, 
-        learning_rate: int = 0.1,
-        max_features: Optional[Union[int, Literal["sqrt", "log"]]] = None,
-        impurity_type: Literal["squared_loss", "absolute_loss", "huber"] = "squared_loss"
-    ):
-        self.max_depth = max_depth
-        self.n_estimators = n_estimators
-        self.max_features = max_features
-        self.learning_rate = learning_rate
         
-        self._set_impurity_function(impurity_type)
+        self.max_depth = max_depth
+        self.max_features = max_features
+        self.n_estimators = n_estimators
+        self.learning_rate = learning_rate
+        self.impurity_type = impurity_type
 
     def fit(self, x_train: np.ndarray, y_train: np.ndarray, verbose: int = 1):
         if self.impurity_type is None:
@@ -65,12 +46,16 @@ class GradientBoostedRegressionTree:
         for i in range(self.n_estimators):
             residual = self.residual_error(prediction, y_train).reshape(-1, 1)
 
-            tree = IdentificationTreeFactory.create("regressor")
-            tree.compile(
-                impurity_type=self.impurity_type[0],
-                max_depth=self.max_depth,
-                max_features=self.max_features
+            tree = (
+                IdentificationTreeFactory.create("regressor")
+                .compile(
+                    max_depth=self.max_depth,
+                    max_features=self.max_features,
+                    impurity_type=self.impurity_type[0]
+                )
+                .build()
             )
+        
             tree.fit(x_train, residual)
 
             predict = tree.predict(x_train).reshape(-1, 1)

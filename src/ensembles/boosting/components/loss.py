@@ -5,8 +5,8 @@ import numpy as np
 
 
 class LossFunction(ABC):
-    @abstractmethod
     @staticmethod
+    @abstractmethod
     def compute(error: float, incorrect: np.ndarray, sample_weights: np.ndarray) -> Tuple[float, np.ndarray]:
         raise NotImplementedError("Subclasses must implement this method")
     

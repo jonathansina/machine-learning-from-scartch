@@ -16,8 +16,8 @@ from src.neighborhood.components.distances import DistanceMetric
 class NearestNeighbor:
     def __init__(self, predictor: Predictor, k: int, metric: DistanceMetric, search_algorithm: SearchAlgorithm):
         self.k = k
-        self.predictor = predictor
         self.metric = metric
+        self.predictor = predictor
         self.search_algorithm = search_algorithm
 
     def fit(self, x_train: np.ndarray, y_train: np.ndarray):
