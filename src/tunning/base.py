@@ -80,7 +80,7 @@ class BayesianTuning:
             y_train.append([objective_function(*x)])
             
         return np.array(x_train), np.array(y_train), size_x
-    
+
     def _generate_parameter_grid(self, parameters_bound: Dict[str, Any], n_points: int = 100):
         x_range = []
         for param_name, bounds in parameters_bound.items():
