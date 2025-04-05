@@ -104,3 +104,5 @@ class IdentificationTree:
             return np.array([self._traverse(xi, self.root) for xi in x])
 
         return self._traverse(x, self.root)
+    
+    
